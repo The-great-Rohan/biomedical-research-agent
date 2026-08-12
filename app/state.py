@@ -1,31 +1,29 @@
-from typing import List, Optional
-
-from pydantic import BaseModel, Field
+from typing import List, Optional, TypedDict
 
 
-class Article(BaseModel):
+class Article(TypedDict, total=False):
     """Structured representation of a biomedical publication."""
 
     title: str
-    authors: List[str] = Field(default_factory=list)
-    journal: Optional[str] = None
-    publication_date: Optional[str] = None
-    pmid: Optional[str] = None
-    doi: Optional[str] = None
-    abstract: Optional[str] = None
-    relevance_score: Optional[float] = None
+    authors: List[str]
+    journal: Optional[str]
+    publication_date: Optional[str]
+    pmid: Optional[str]
+    doi: Optional[str]
+    abstract: Optional[str]
+    relevance_score: Optional[float]
 
 
-class ResearchState(BaseModel):
+class ResearchState(TypedDict, total=False):
     """Shared state passed between LangGraph nodes."""
 
     question: str
-    search_queries: List[str] = Field(default_factory=list)
-    articles: List[Article] = Field(default_factory=list)
-    selected_articles: List[Article] = Field(default_factory=list)
-    extracted_evidence: List[str] = Field(default_factory=list)
-    final_answer: Optional[str] = None
-    citations: List[str] = Field(default_factory=list)
-    search_iteration: int = 0
-    sufficient_evidence: bool = False
-    error: Optional[str] = None
+    search_queries: List[str]
+    articles: List[Article]
+    selected_articles: List[Article]
+    extracted_evidence: List[str]
+    final_answer: Optional[str]
+    citations: List[str]
+    search_iteration: int
+    sufficient_evidence: bool
+    error: Optional[str]
