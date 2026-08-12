@@ -14,12 +14,14 @@ class PubMedTool:
 
     def search(self, query: str, max_results: int = 10) -> List[Article]:
         """Search PubMed and retrieve article metadata and abstracts."""
+
         search_handle = Entrez.esearch(
             db="pubmed",
             term=query,
             retmax=max_results,
             sort="relevance",
         )
+
         search_result = Entrez.read(search_handle)
         search_handle.close()
 
@@ -31,9 +33,9 @@ class PubMedTool:
         fetch_handle = Entrez.efetch(
             db="pubmed",
             id=pmids,
-            rettype="medline",
             retmode="xml",
         )
+
         records = Entrez.read(fetch_handle)
         fetch_handle.close()
 
@@ -44,7 +46,7 @@ class PubMedTool:
 
     @staticmethod
     def _parse_article(record) -> Article:
-        """Convert a PubMed XML record into the project Article model."""
+        """Convert a PubMed XML record into an Article dictionary."""
 
         citation = record["MedlineCitation"]
         article = citation["Article"]
@@ -75,9 +77,11 @@ class PubMedTool:
         journal = article.get("Journal", {}).get("Title")
 
         publication_date = None
+
         journal_issue = article.get("Journal", {}).get(
             "JournalIssue", {}
         )
+
         pub_date = journal_issue.get("PubDate", {})
 
         if pub_date:
@@ -101,12 +105,12 @@ class PubMedTool:
                 doi = str(article_id)
                 break
 
-        return Article(
-            title=title,
-            authors=authors,
-            journal=str(journal) if journal else None,
-            publication_date=publication_date,
-            pmid=pmid,
-            doi=doi,
-            abstract=abstract,
-        )
+        return {
+            "title": title,
+            "authors": authors,
+            "journal": str(journal) if journal else None,
+            "publication_date": publication_date,
+            "pmid": pmid,
+            "doi": doi,
+            "abstract": abstract,
+        }
